@@ -1,9 +1,11 @@
 
+from PyPDF2 import PdfFileReader
 import csv
 from msilib.schema import File
 import re
 import pdfplumber
 import pandas as pd
+from pathlib import Path
 from collections import namedtuple
 
 jrnl_re = re.compile(r'NAME (\d+) (.*) \(.*? Phone (.*) Email.*\).+(\d+ [A-Z].*)')
@@ -47,4 +49,24 @@ with pdfplumber.open("File.pdf") as pdf:
 with pdfplumber.open("File.pdf") as pdf:
     lines = pdf.pages[0].extract_text(x_tolerance=3, y_tolerance=4)
     print(lines)
+
+
+
+
+
+pdf = PdfFileReader('File.pdf')
+
+page_1_object = pdf.getPage(0)
+
+
+page_1_text = page_1_object.extractText()
+
+
+with Path('File_text.csv').open(mode='w' , encoding="utf-8") as output_file:
+    text=''
+    for page in pdf.pages:
+        text += page.extractText()
+    output_file.write(text)
+
+
 
